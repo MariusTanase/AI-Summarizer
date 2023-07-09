@@ -14,6 +14,9 @@ const Hero = () => {
         Summarize articles with <br className='max-md:hidden' />
         <span className='bg-gradient-to-r from-amber-500 via-orange-600 to-yellow-500 bg-clip-text text-transparent'>OpenAI Model</span>
       </h1>
+      <h2 className='mt-5 text-lg text-gray-600 sm:text-xl text-center max-w-2xl'>
+          Simplify your reading with AI Summz, an AI-powered summarizer that can summarize any article in a few seconds.
+      </h2>
     </header>
   )
 }
