@@ -47,7 +47,7 @@ npm run dev
 
 7. Enter the URL of the article you want to summarize into the provided input field.
 
-8. Click on the "Summarize" button.
+8. Click on the "Search" button.
 
 9. The application will process the article and display the summary on the screen.
 
