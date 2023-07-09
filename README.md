@@ -43,7 +43,7 @@ npm install
 npm run dev
 ```
 
-6. Open your web browser and go to `http://localhost:3000`.
+6. Open your web browser and go to `http://localhost:5173`.
 
 7. Enter the URL of the article you want to summarize into the provided input field.
 
