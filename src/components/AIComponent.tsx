@@ -6,20 +6,31 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { useState, useEffect } from 'react'
-import { copy, linkIcon, loader, tick } from '../assets';
+
+import copy from '../assets/copy.svg';
+import linkIcon from '../assets/link.svg';
+import loader from '../assets/loader.svg';
+import tick from '../assets/tick.svg';
 
 import { useLazyGetSummaryQuery } from '../services/article';
 
-const Demo = () => {
-  const [article, setArticle] = useState({
+interface Article {
+  url: string;
+  summary: string;
+}
+
+const AIComponent = (): JSX.Element => {
+  const [article, setArticle] = useState<Article>({
     url: '',
     summary: ''
   });
 
-  const [history, setHistory] = useState([]);
+  const [history, setHistory] = useState<Article[]>([]);
 
   useEffect(() => {
-    const historyFromLocalStorage = JSON.parse(localStorage.getItem('history'))
+    const historyFromLocalStorageString: string | null = localStorage.getItem('history');
+    const historyFromLocalStorage: Article[] | null = historyFromLocalStorageString ? JSON.parse(historyFromLocalStorageString) : null;
+
     if (historyFromLocalStorage) {
       setHistory(historyFromLocalStorage);
     }
@@ -27,11 +38,11 @@ const Demo = () => {
 
   const [getSummary, { isLoading, isError }] = useLazyGetSummaryQuery();
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { data } = await getSummary({ articleUrl: article.url });
     if (data?.summary) {
-      const newArticle = { ...article, summary: data.summary };
+      const newArticle: Article = { ...article, summary: data.summary };
 
       const updatedHistory = [newArticle, ...history];
 
@@ -42,31 +53,31 @@ const Demo = () => {
     }
   }
 
-  const [copied, setCopied] = useState('');
+  const [copied, setCopied] = useState<string>('');
 
-  const handleCopy = (copyUrl) => {
-    setCopied(copyUrl)
-    navigator.clipboard.writeText(copyUrl)
+  const handleCopy = async (copyUrl: string) => {
+    setCopied(copyUrl);
+    await navigator.clipboard.writeText(copyUrl);
 
     setTimeout(() => {
-      setCopied('')
-    },3000)
-
+      setCopied('');
+    }, 3000);
   }
-
 
   return (
     <section className='mt-16 w-full max-w-xl'>
-
       <div className='flex flex-col w-full gap-2'>
-        <form className='flex relative justify-center items-center'
-          onSubmit={(e) => handleSubmit(e)}>
+        <form
+          className='flex relative justify-center items-center'
+          onSubmit={(e) => handleSubmit(e)}
+        >
           <img
             src={linkIcon}
             alt="link icon"
             className='absolute left-0 my-2 ml-2 w-5'
           />
-          <input className='peer block w-full rounded-lg border-2 transition-all duration-300 ease-in-out outline-none border-gray-300 bg-white shadow-lg font-satoshi focus:border-black focus:outline-none focus:ring-0 py-2.5 pl-10 pr-12 text-sm'
+          <input
+            className='peer block w-full rounded-lg border-2 transition-all duration-300 ease-in-out outline-none border-gray-300 bg-white shadow-lg font-satoshi focus:border-black focus:outline-none focus:ring-0 py-2.5 pl-10 pr-12 text-sm'
             type='url'
             placeholder='Enter the article URL'
             onChange={(e) => { setArticle({ ...article, url: e.target.value }) }}
@@ -86,19 +97,22 @@ const Demo = () => {
         <div className='flex flex-col gap-2 max-h-60 overflow-y-auto'>
           <h2 className='text-lg font-medium'>History</h2>
           {history.map((item, index) => (
-            <div key={`key-${index}`} onClick={() => setArticle(item)} className='p-3 flex justify-start items-center flex-row bg-white border border-gray-200 gap-3 rounded-lg cursor-pointer'>
+            <div
+              key={`key-${index}`}
+              onClick={() => setArticle(item)}
+              className='p-3 flex justify-start items-center flex-row bg-white border border-gray-200 gap-3 rounded-lg cursor-pointer'
+            >
               <div onClick={() => handleCopy(item.url)} className='w-7 h-7 rounded-full bg-white/10 shadow-[inset_10px_-50px_94px_0_rgb(199, 199, 199, 0.2)] backdrop-blur flex justify-center items-center cursor-pointer'>
-                <img src={copied === item.url ? tick : copy} alt='copy icon' className='w-[40%] h-[40%] object-contain' />
+                <img src={copied === item?.url ? tick : copy} alt='copy icon' className='w-[40%] h-[40%] object-contain' />
               </div>
               <p className='flex-1 font-satoshi text-blue-800 text-md font-medium truncate'>
-                {item.url}
+                {item?.url}
               </p>
             </div>
           ))}
         </div>
       </div>
       {/* Display the result form API */}
-
       <div className='my-10 max-w-full flex justify-center items-center'>
         {isLoading ? (
           <div className='flex flex-col justify-center items-center'>
@@ -110,12 +124,9 @@ const Demo = () => {
             <p className='font-inter font-bold text-red-900 text-center'>
               Error!
               <br />
-
               <span className='font-satoshi font-normal text-gray-800'>
-                {isError?.data?.error || 'Something went wrong'}
-
+                {isError || 'Something went wrong'}
               </span>
-
             </p>
           </div>
         ) : (
@@ -127,14 +138,12 @@ const Demo = () => {
                   {article.summary}
                 </p>
               </div>
-            
             </div>
           )
         )}
       </div>
-
     </section>
-  )
+  );
 }
 
-export default Demo
+export default AIComponent;
