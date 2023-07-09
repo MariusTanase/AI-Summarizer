@@ -1,5 +1,5 @@
 import Hero from './components/Hero'
-import Demo from './components/Demo'
+import AIComponent from './components/AIComponent'
 
 import './App.css'
 
@@ -12,7 +12,7 @@ const App = () => {
       </div>
         <div className="relative z-10 flex justify-center items-center flex-col max-w-7xl mx-auto sm: px-16">
         <Hero />
-        <Demo />
+        <AIComponent />
       </div>
 
 
